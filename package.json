@@ -4,6 +4,9 @@
   "private": true,
   "description": "Browse and delete workspace sessions in the DSH Web UI.",
   "type": "module",
+  "scripts": {
+    "selftest": "node scripts/selftest.mjs"
+  },
   "exports": {
     ".": "./index.js",
     "./client": "./client.js",
