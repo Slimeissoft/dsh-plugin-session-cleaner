@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Session Cleaner",
+    "description": "Every session on this machine, grouped by workspace: move them to a recycle bin restorable for 7 days, or delete them for good to free disk space."
+  }
+}
