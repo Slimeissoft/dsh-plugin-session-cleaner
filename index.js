@@ -190,6 +190,7 @@ async function listSessions(ctx, root, res) {
       parentSessionId: header.parentSession ?? null,
       activity: [],
       live: false,
+      loaded: false,
       archived: archived.has(header.id),
       pinned: pinned.has(header.id),
     }
@@ -207,19 +208,38 @@ async function listSessions(ctx, root, res) {
 }
 
 /**
- * Mark the sessions the app considers busy. `sessions`/`agents` cover retained
- * scopes; the `workspace/session-activity` waterfall is the same gate the
- * workspace registry consults before archiving, and it is the only one that
- * knows about running turns, jobs, schedules and subagents.
+ * Mark the sessions the app considers busy.
+ *
+ * The only reliable signal is the one the workspace registry itself uses before
+ * archiving: the `turn` family of the `workspace/session-activity` waterfall,
+ * which reports a running Agent turn — plus the jobs and schedules families its
+ * providers contribute. An Agent object existing is *not* that signal: the
+ * session controller keeps a scope for every session a client has displayed, so
+ * treating "loaded" as "running" marks half the list undeletable while nothing
+ * is actually executing.
  */
 async function fillActivity(ctx, sessions) {
   const live = ctx.get('sessions')
   const agents = ctx.get('agents')
   await Promise.all(sessions.map(async (session) => {
     const activity = await activityOf(ctx, session.id)
+    const status = agentStatus(agents, session.id)
     session.activity = activity
-    session.live = retained(live, session.id) || retained(agents, session.id) || activity.length > 0
+    session.live = activity.length > 0 || status === 'running'
+    session.loaded = status !== undefined || retained(live, session.id)
   }))
+}
+
+/** The Agent's status string, or undefined when no Agent entry exists. */
+function agentStatus(service, id) {
+  if (service === undefined || typeof service.get !== 'function') return undefined
+  try {
+    const agent = service.get(id)
+    if (agent === null || typeof agent !== 'object') return undefined
+    return typeof agent.status === 'string' ? agent.status : 'loaded'
+  } catch {
+    return undefined
+  }
 }
 
 function retained(service, id) {
@@ -319,7 +339,7 @@ async function deleteSessions(ctx, root, req, res) {
     }
 
     const activity = await activityOf(ctx, id)
-    if (activity.length > 0 || retained(ctx.get('sessions'), id) || retained(ctx.get('agents'), id)) {
+    if (activity.length > 0 || agentStatus(ctx.get('agents'), id) === 'running') {
       results.push({ id, ok: false, reason: 'live', activity })
       continue
     }

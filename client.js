@@ -29,6 +29,7 @@ window.__ModuleLoader__.load({
       'summary.size': '约 {size}',
       'summary.live': '另有 {count} 个会话正在使用，无法删除',
       'badge.live': '运行中',
+      'badge.loaded': '已打开',
       'badge.subagent': '子会话',
       'badge.archived': '已归档',
       'badge.pinned': '已置顶',
@@ -82,6 +83,7 @@ window.__ModuleLoader__.load({
       'summary.size': 'about {size}',
       'summary.live': '{count} more are in use and cannot be deleted',
       'badge.live': 'Running',
+      'badge.loaded': 'Open',
       'badge.subagent': 'Subagent',
       'badge.archived': 'Archived',
       'badge.pinned': 'Pinned',
@@ -469,6 +471,7 @@ window.__ModuleLoader__.load({
               title: kinds.length === 0 ? t('badge.live') : label,
             }, label))
           }
+          if (!isLive && session.loaded === true) badges.push(h('span', { key: 'open', className: 'sc-badge' }, t('badge.loaded')))
           if (session.subagent) badges.push(h('span', { key: 'sub', className: 'sc-badge' }, t('badge.subagent')))
           if (session.archived) badges.push(h('span', { key: 'arc', className: 'sc-badge sc-badge-warn' }, t('badge.archived')))
           if (session.pinned) badges.push(h('span', { key: 'pin', className: 'sc-badge' }, t('badge.pinned')))

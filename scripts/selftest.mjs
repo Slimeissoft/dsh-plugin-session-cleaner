@@ -62,6 +62,8 @@ async function harness({ sessions, failDetach = false }) {
     pinSession: async () => {},
   }
   const state = { activity: [] }
+  /** What the `sessions` and `agents` services would answer: loaded ≠ running. */
+  const presence = { sessions: new Map(), agents: new Map() }
 
   const ctx = {
     effect: (fn) => fn(),
@@ -80,7 +82,12 @@ async function harness({ sessions, failDetach = false }) {
         return listed
       },
     },
-    get: (name) => ({ workspaceRegistry: registry, connection: undefined })[name],
+    get: (name) => ({
+      workspaceRegistry: registry,
+      connection: undefined,
+      sessions: { get: (id) => presence.sessions.get(id) },
+      agents: { get: (id) => presence.agents.get(id) },
+    })[name],
     waterfall: async () => state.activity,
   }
 
@@ -112,7 +119,7 @@ async function harness({ sessions, failDetach = false }) {
     return { status: res.statusCode, data }
   }
 
-  return { home, root, call, seen, state, workspace }
+  return { home, root, call, seen, state, workspace, presence }
 }
 
 //#region happy path
@@ -121,12 +128,22 @@ async function harness({ sessions, failDetach = false }) {
     { id: SESSION_A, cwd: 'D:\\CODE\\demo', createdAt: 1 },
     { id: SESSION_B, cwd: 'D:\\CODE\\demo', createdAt: 2 },
   ]
-  const { home, root, call, seen, state } = await harness({ sessions })
+  const { home, root, call, seen, state, presence } = await harness({ sessions })
 
   let r = await call('GET', '/session-cleaner/sessions')
   check('list returns every session', r.status === 200 && r.data.sessions.length === 2, r.data)
   check('list reports the retention window', r.data.retentionDays === 7)
   check('trash starts empty', r.data.trash.length === 0)
+
+  // "Loaded" is what the session controller keeps for anything a client has
+  // displayed; it must not read as "running", or the whole list is undeletable.
+  presence.sessions.set(SESSION_A, {})
+  presence.agents.set(SESSION_B, { status: 'idle' })
+  r = await call('GET', '/session-cleaner/sessions')
+  const rowA = r.data.sessions.find((session) => session.id === SESSION_A)
+  const rowB = r.data.sessions.find((session) => session.id === SESSION_B)
+  check('a loaded session is marked loaded, not running', rowA.loaded === true && rowA.live === false, rowA)
+  check('an idle agent is not running', rowB.loaded === true && rowB.live === false, rowB)
 
   r = await call('GET', '/session-cleaner/sessions', { headers: { host: '127.0.0.1:5173', 'sec-fetch-site': 'cross-site' } })
   check('cross-site read is refused', r.status === 403, r)
@@ -155,6 +172,16 @@ async function harness({ sessions, failDetach = false }) {
   r = await call('POST', '/session-cleaner/delete', { body: { sessionIds: [SESSION_B] } })
   check('busy session is refused', r.data.results[0].reason === 'live', r.data)
   state.activity = []
+
+  // The turn family is what the app itself trusts; a running Agent must still
+  // block even when the waterfall reports nothing (a custom composition).
+  presence.agents.set(SESSION_B, { status: 'running' })
+  r = await call('POST', '/session-cleaner/delete', { body: { sessionIds: [SESSION_B] } })
+  check('a running agent is refused', r.data.results[0].reason === 'live', r.data)
+  presence.agents.set(SESSION_B, { status: 'idle' })
+  r = await call('POST', '/session-cleaner/delete', { body: { sessionIds: [SESSION_B] } })
+  check('an idle agent does not block', r.data.results[0].ok === true, r.data)
+  presence.agents.clear()
 
   r = await call('POST', '/session-cleaner/restore', { body: { sessionIds: [SESSION_A] } })
   check('restore succeeds', r.data.results[0].ok === true, r.data)
