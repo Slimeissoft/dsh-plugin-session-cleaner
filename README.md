@@ -2,6 +2,8 @@
 
 DSH Web 界面插件：把本机所有会话按工作区分组列出，勾选后批量删除，释放磁盘空间。删除是「移入回收站」，7 天内可以恢复。
 
+> 社区插件，与 DeepSeek 官方无关。许可证 MIT。
+
 ## 功能
 
 - 左侧栏底部多一个「会话清理」图标，点击打开管理面板。
@@ -39,10 +41,20 @@ Client 半（`client.js`）注册 `main` 面板和 `sidebar.panellist` 图标，
 ## 安装
 
 ```powershell
-dsh plugin install <本目录>
+dsh plugin add github:Slimeissoft/dsh-plugin-session-cleaner
 ```
 
-或在插件管理里安装本目录。
+本地开发目录直接装：
+
+```powershell
+dsh plugin add D:\CODE\harnes\dsh-plugin-session-cleaner
+```
+
+装完重启 DSH。宿主半身在 `index.js`，界面半身在 `client.js`，两半都在同一个包里。
+
+## 兼容性
+
+针对 **DSH 0.2.1-rc.5** 开发和测试。用到的都是宿主服务（`sessionPersistence`、`workspaceRegistry`、`workspace/session-activity` 瀑布），DSH 升级后这些契约若变动，插件需要跟着改。
 
 ## 注意
 

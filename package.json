@@ -2,7 +2,23 @@
   "name": "dsh-plugin-session-cleaner",
   "version": "0.1.0",
   "private": true,
-  "description": "Browse and delete workspace sessions in the DSH Web UI.",
+  "description": "Session recycle bin for the DSH Web UI: browse every session by workspace, move them to a bin restorable for 7 days, or delete them for good.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Slimeissoft/dsh-plugin-session-cleaner.git"
+  },
+  "homepage": "https://github.com/Slimeissoft/dsh-plugin-session-cleaner#readme",
+  "bugs": {
+    "url": "https://github.com/Slimeissoft/dsh-plugin-session-cleaner/issues"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "dsh",
+    "deepseek-harness",
+    "session",
+    "cleanup"
+  ],
   "type": "module",
   "scripts": {
     "selftest": "node scripts/selftest.mjs"
@@ -19,7 +35,9 @@
     "cordis.patch.yml",
     "locale/*.json",
     "icon.svg",
-    "README.md"
+    "README.md",
+    "README_EN.md",
+    "LICENSE"
   ],
   "dsh": {
     "bundle": {
