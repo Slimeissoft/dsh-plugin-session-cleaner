@@ -54,6 +54,16 @@ dsh plugin add D:\CODE\harnes\dsh-plugin-session-cleaner
 
 Restart DSH afterwards. The Host half is `index.js`, the browser half is `client.js`; both ship in the same package.
 
+### Install from a plugin market
+
+This repository ships its own index at `market/index.json`. Enable GitHub Pages (branch `main`, directory `/`), then add
+
+```
+https://slimeissoft.github.io/dsh-plugin-session-cleaner/market/index.json
+```
+
+as an index source under **Plugins → Discover → Add index source**, and the plugin becomes searchable and one-click installable.
+
 ## Compatibility
 
 Built and tested against **DSH 0.2.1-rc.5**. It depends on host services (`sessionPersistence`, `workspaceRegistry`, the `workspace/session-activity` waterfall); if those contracts move in a later release, the plugin needs to follow.

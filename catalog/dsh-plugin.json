@@ -1,0 +1,18 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Yan-Zero/dsh-std/3df054302468d2091859db4b3bd079042d33f100/packages/manifest/schema/dsh-plugin-0.15.schema.json",
+  "manifestVersion": "0.15",
+  "id": "dev.slimeissoft.dsh-plugin-session-cleaner",
+  "name": "dsh-plugin-session-cleaner",
+  "version": "0.1.0",
+  "facets": {
+    "host": {
+      "entry": "index.js",
+      "apiVersion": "v1alpha1"
+    }
+  },
+  "license": "MIT",
+  "source": {
+    "repository": "https://github.com/Slimeissoft/dsh-plugin-session-cleaner",
+    "revision": "6f54d1c9d10afdf2dfad5f6324f953ed5fa2a4d5"
+  }
+}

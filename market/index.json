@@ -1,0 +1,44 @@
+{
+  "format": 1,
+  "title": {
+    "en": "Session Cleaner",
+    "zh": "会话清理"
+  },
+  "description": {
+    "en": "A DSH plugin index with one entry: a session recycle bin for the DSH Web UI.",
+    "zh": "DSH 插件索引，只有一条：给 DSH Web 界面加一个会话回收站。"
+  },
+  "plugins": [
+    {
+      "name": "dsh-plugin-session-cleaner",
+      "title": {
+        "en": "Session Cleaner",
+        "zh": "会话清理"
+      },
+      "description": {
+        "en": "Browse every session grouped by workspace, move them to a bin restorable for 7 days, or delete them for good.",
+        "zh": "按工作区分组列出本机所有会话，删除先进回收站、7 天内可恢复，也可彻底删除释放磁盘。"
+      },
+      "icon": "https://raw.githubusercontent.com/Slimeissoft/dsh-plugin-session-cleaner/main/icon.svg",
+      "author": "Slimeissoft",
+      "homepage": "https://github.com/Slimeissoft/dsh-plugin-session-cleaner",
+      "repository": {
+        "url": "https://github.com/Slimeissoft/dsh-plugin-session-cleaner"
+      },
+      "versions": [
+        {
+          "version": "0.1.0",
+          "publishTimestamp": 1793933175,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/Slimeissoft/dsh-plugin-session-cleaner",
+            "commit": "6f54d1c9d10afdf2dfad5f6324f953ed5fa2a4d5"
+          },
+          "engines": {
+            "dsh": ">=0.2.1-rc.5 <0.3.0"
+          }
+        }
+      ]
+    }
+  ]
+}

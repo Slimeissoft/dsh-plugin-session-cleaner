@@ -52,6 +52,16 @@ dsh plugin add D:\CODE\harnes\dsh-plugin-session-cleaner
 
 装完重启 DSH。宿主半身在 `index.js`，界面半身在 `client.js`，两半都在同一个包里。
 
+### 从插件市场装
+
+本仓库自带一份索引 `market/index.json`。在仓库设置里开启 GitHub Pages（分支 `main`、目录 `/`）后，把
+
+```
+https://slimeissoft.github.io/dsh-plugin-session-cleaner/market/index.json
+```
+
+作为索引源加进 DSH 的「插件 → 发现 → 添加索引源」，即可在市场里搜到并一键安装。
+
 ## 兼容性
 
 针对 **DSH 0.2.1-rc.5** 开发和测试。用到的都是宿主服务（`sessionPersistence`、`workspaceRegistry`、`workspace/session-activity` 瀑布），DSH 升级后这些契约若变动，插件需要跟着改。
